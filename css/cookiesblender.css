@@ -1,0 +1,271 @@
+/* The switch - the box around the slider */
+.cookiesblender-switch {
+
+    --cookiesblender-slider-width: 16px;
+    --cookiesblender-slider-padding: 4px;
+
+    --cookiesblender-switch-height: calc(var(--cookiesblender-slider-padding) + var(--cookiesblender-slider-padding) + var(--cookiesblender-slider-width));
+    --cookiesblender-switch-width:  calc(var(--cookiesblender-slider-width) + var(--cookiesblender-slider-width) + var(--cookiesblender-slider-padding) + var(--cookiesblender-slider-padding));
+
+    position: relative;
+    display: inline-block;
+    width: var(--cookiesblender-switch-width);
+    height: var(--cookiesblender-switch-height);
+}
+
+/* Hide default HTML checkbox */
+.cookiesblender-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.cookiesblender-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.cookiesblender-slider:before {
+    position: absolute;
+    content: "";
+    height: var(--cookiesblender-slider-width);
+    width: var(--cookiesblender-slider-width);
+    left: var(--cookiesblender-slider-padding);
+    bottom: var(--cookiesblender-slider-padding);
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .cookiesblender-slider {
+    background-color: #2196F3;
+}
+
+input:focus + .cookiesblender-slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .cookiesblender-slider:before {
+    -webkit-transform: translateX(var(--cookiesblender-slider-width));
+    -ms-transform: translateX(var(--cookiesblender-slider-width));
+    transform: translateX(var(--cookiesblender-slider-width));
+}
+
+/* Rounded sliders */
+.cookiesblender-slider.round {
+    border-radius: var(--cookiesblender-switch-height);
+}
+
+.cookiesblender-slider.round:before {
+    border-radius: 50%;
+}
+
+
+
+
+
+
+/**
+* Dialog
+ */
+
+dialog.cookiesblender-dialog{
+    --dialog-text-color : #333;
+    --dialog-background-color : #fff;
+    --dialog-padding : 20px;
+    --general-text-color: var(--dialog-text-color);
+
+    min-width: min(70vw, 500px);
+    border: none;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.6);
+    color:var(--dialog-text-color);
+    background-color: var(--dialog-background-color );
+    padding: 0;
+
+    background-image: url("../img/cookies-revert.png");
+    background-repeat: no-repeat;
+    background-position: calc(100% + 80px) calc(100% + 30px);
+    background-size: 50%;
+
+    border-radius: 20px;
+}
+
+dialog.cookiesblender-dialog::backdrop{
+    backdrop-filter: blur(1px);
+    background-color: rgba(0,0,0,0.5);
+}
+
+dialog.cookiesblender-dialog :is(header, footer, .body):empty{
+    display: none;
+}
+
+dialog.cookiesblender-dialog :where(header, footer, .body){
+    padding: 10px var(--dialog-padding);
+}
+
+dialog.cookiesblender-dialog :where(header){
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+dialog.cookiesblender-dialog :where(footer){
+    border-top: 1px solid rgba(0,0,0,0.1);
+    text-align: right;
+    background-color: rgba(0,0,0,0.05);
+}
+
+dialog.cookiesblender-dialog footer button{
+    margin-left: 10px;
+}
+
+dialog.cookiesblender-dialog[open]{
+    animation: slide-up 0.2s forwards, fade-in 0.2ms forwards;
+}
+
+
+/* Dialog content */
+
+.dialog-form-head{
+    font-size: 0.8em;
+}
+
+.dialog-form-head-item:not(:first-child){
+    margin-left: 30px;
+}
+
+.dialog-form-head-item.split-qty-remain{
+    font-weight: bold;
+}
+
+.dialog-form-body{
+    margin-top: 10px;
+}
+
+
+.dialog-form-control{
+    margin-top: var(--dialog-padding);
+}
+
+.curent-split-item-line{
+
+}
+.new-split-item-line{
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.dialog-form-icon-btn{
+
+    --bg-gradian-start: #ffffff;
+    --bg-gradian-end: #e6e6e6;
+    --border-color: #aaa;
+    --colortext: #444;
+
+    margin-bottom: 3px;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: inline-block;
+    padding: 3px 8px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none !important;
+    background-color: var(--bg-gradian-end);
+    background-image: -moz-linear-gradient(top,var(--bg-gradian-start), var(--bg-gradian-end));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(var(--bg-gradian-start)), to(var(--bg-gradian-end)));
+    background-image: -webkit-linear-gradient(top, var(--bg-gradian-start), var(--bg-gradian-end));
+    background-image: -o-linear-gradient(top, var(--bg-gradian-start), var(--bg-gradian-end));
+    background-image: linear-gradient(to bottom, var(--bg-gradian-start), var(--bg-gradian-end));
+    background-repeat: repeat-x;
+    border: 1px solid var(--border-color);
+    -webkit-border-radius: 2px;
+    border-radius: 1px;
+    font-weight: bold;
+    text-transform: uppercase;
+
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    /*
+      Introduced in Internet Explorer 10.
+      See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+    */
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.dialog-form-icon-btn:active{
+    --bg-gradian-start: #e6e6e6;
+    --bg-gradian-end:  #ffffff;
+}
+
+html[data-theme-color-scheme="dark"] .dialog-form-icon-btn{
+    --bg-gradian-start: rgb(44, 55, 70);
+    --bg-gradian-end: var(--bg-gradian-start);
+    --colortext: var(--general-text-color);
+    --border-color: var(--bg-gradian-start);
+}
+html[data-theme-color-scheme="dark"] .dialog-form-icon-btn:active{
+    --bg-gradian-start: rgb(26, 35, 42);
+}
+
+
+/* Line separation */
+hr.dialog-separator {
+
+    --border-color : rgba(0,0,0,0.2);
+
+    border: none;
+    overflow: visible;
+    box-sizing: content-box;
+    order: 0;
+    height: 1px;
+    width: 10%;
+    position: relative;
+    margin: 10px auto;
+
+    background: var(--border-color);
+}
+hr.dialog-separator:before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    display: inline-block;
+    border: 1px solid var(--border-color);
+    position: absolute;
+    top: -3px;/* un petit fallback au cas ou la virgule en css passe pas*/
+    top: -2.5px;
+    left: 50%;
+    margin: 0 0 0 -3px;
+    transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    /* IE 9 */
+    -webkit-transform: rotate(45deg);
+    /* Opera, Chrome, and Safari */
+}
+
+.dialog-form-head-number{
+    min-width: 35px;
+    display: inline-block;
+}
+
+.dialog-form-item{
+    display: inline-block;
+}
+.dialog-form-item [readonly]{
+    --inputbackgroundcolor: #efefef;
+}
+
+
+html[data-theme-color-scheme="dark"] .dialog-form-item [readonly]{
+    --inputbackgroundcolor: #535c6a;
+    --colortext: #8e96a5;
+}

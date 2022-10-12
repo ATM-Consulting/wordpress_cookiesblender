@@ -13,6 +13,9 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 
+require_once __DIR__ .'/api.php';
+
+
 // register jquery and style on initialization
 add_action('init', 'register_script');
 function register_script() {
@@ -65,6 +68,43 @@ function getCookiesblenderConsentList(){
             'title' => __('Other Script').' 01'
         )
     );
+}
+
+function getCookiesBlenderConsentDataList(){
+    $consentList = getCookiesblenderConsentList();
+
+    $data = array(
+        'cookiesList' => array(),
+        'pages' => array(
+            'rgpdPageUrl' => get_option('rgpdPageUrl')
+        ),
+        'langs' => array(
+            'WeAreCookies' => __('Bonjour, nous sommes les cookies !'),
+            'RequiredCookies' => __('Cookies requis aux fonctionnement'),
+            'SaveCookiesConfiguration' => __('Sauvegarder mes préférences'),
+            'AcceptAll' => __('Accepter'),
+        )
+    );
+
+    foreach ($consentList as $key => $params){
+        $enable = boolval(get_option('enable_'.$key.'_cookies'));
+
+        if(!$enable){
+            continue;
+        }
+
+        $item = new stdClass();
+        $item->title = $params['title'];
+        $item->cookieKey = $key;
+        $item->name = get_option($key.'_cookies');
+        if(empty($item->name)){
+            $item->name = $item->title;
+        }
+        $item->content = get_option($key.'_script');
+
+        $data['cookiesList'][] = $item;
+    }
+    return $data;
 }
 
 function add_cookiesblender_config_page(){

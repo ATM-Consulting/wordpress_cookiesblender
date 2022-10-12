@@ -1,3 +1,18 @@
+
+#cookiesblender-dialog-btn{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
+    height: 32px;
+    width: 32px;
+
+    background-image: url("../img/cookies.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
 /* The switch - the box around the slider */
 .cookiesblender-switch {
 
@@ -49,6 +64,11 @@ input:checked + .cookiesblender-slider {
     background-color: #2196F3;
 }
 
+input[disabled] + .cookiesblender-slider {
+    cursor: not-allowed;
+    background-color: #335d81;
+}
+
 input:focus + .cookiesblender-slider {
     box-shadow: 0 0 1px #2196F3;
 }
@@ -95,7 +115,7 @@ dialog.cookiesblender-dialog{
     background-position: calc(100% + 80px) calc(100% + 30px);
     background-size: 50%;
 
-    border-radius: 20px;
+    border-radius: 5px;
 }
 
 dialog.cookiesblender-dialog::backdrop{
@@ -115,10 +135,14 @@ dialog.cookiesblender-dialog :where(header){
     border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
+dialog.cookiesblender-dialog :where(header, .body){
+    background-color: rgba(255,255,255, 0.7);
+}
+
 dialog.cookiesblender-dialog :where(footer){
     border-top: 1px solid rgba(0,0,0,0.1);
     text-align: right;
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(255,255,255,0.9);
 }
 
 dialog.cookiesblender-dialog footer button{
@@ -268,4 +292,18 @@ hr.dialog-separator:before {
 html[data-theme-color-scheme="dark"] .dialog-form-item [readonly]{
     --inputbackgroundcolor: #535c6a;
     --colortext: #8e96a5;
+}
+
+
+
+.cookiesblender-table-list {
+    width: 100%;
+}
+
+.cookiesblender-table-list :where(td,th){
+    padding: 5px;
+}
+
+.cookiesblender-table-list tr:not(:last-child) :where(td,th){
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }

@@ -10,12 +10,21 @@ class Dialog {
 
 	buttons = {};
 
-	constructor(settings = {}) {
+	constructor(settings = {}, langs = {}) {
+
+		this.langs = Object.assign({
+				Cancel : 'Cancel',
+				Ok : 'Ok',
+			},
+			langs
+		)
+
 		this.settings = Object.assign(
 			{
 				title: '',
 				dialogClass: '',
 				content: '',
+				startOpen:true,
 				onClose : function (){ return true; },
 				onOpen : function (){ return true; },
 				onAccept : function (){ return true; },
@@ -23,8 +32,8 @@ class Dialog {
 					'<form method="dialog" data-ref="form">\n' +
 					'   <div class="body" ></div>\n' +
 					'   <footer>\n' +
-					'        <button class="kanban-btn" data-btn-role="cancel" value="cancel">Cancel</button>\n' +
-					'        <button class="kanban-btn"  data-btn-role="accept" value="default">Ok</button>\n' +
+					'        <button class="btn btn-primary cookiesblender-btn" data-btn-role="cancel" value="cancel">'+ this.langs.Cancel +'</button>\n' +
+					'        <button class="btn btn-primary cookiesblender-btn"  data-btn-role="accept" value="default">'+ this.langs.Ok +'</button>\n' +
 					'   </footer>\n' +
 					'</form>'
 			},
@@ -102,7 +111,10 @@ class Dialog {
 				this.focusable[index].focus();
 			}
 		})
-		this.toggle()
+
+		if(this.settings.startOpen){
+			this.toggle()
+		}
 	}
 
 	open(settings = {}) {

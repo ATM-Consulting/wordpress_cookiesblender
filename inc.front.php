@@ -33,6 +33,8 @@ add_action( 'wp_head', function() {
     $params = new stdClass();
     $params->siteUrl = get_option('siteurl');
     $params->activeOnThisPage = $activeOnThisPage;
+    $params->langs = new stdClass();
+    $params->langs->cookiesButtonTitle = __('Manage your cookies preference');
 
     print '<!-- Set cookies blender params -->'."\r\n";
     print '<script  type="text/javascript" id="cookiesblender-param-script">';

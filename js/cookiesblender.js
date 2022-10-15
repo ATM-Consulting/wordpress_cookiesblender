@@ -95,7 +95,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 for (let item in json['cookiesList']) {
                     let cookiesItem = json['cookiesList'][item];
-                    let checkbox = '<label class="cookiesblender-switch"><input type="checkbox"  name="accepted-cookieblenders" checked="checked" value="' + cookiesItem.cookieKey + '"  /><span class="cookiesblender-slider round"></span></label>';
+
+                    let checkedAttr = '';
+                    if(cookiesItem.accepted != 0){
+                        checkedAttr = 'checked="checked"';
+                    }
+
+                    let checkbox = '<label class="cookiesblender-switch"><input type="checkbox"  name="accepted-cookieblenders" ' + checkedAttr + ' value="' + cookiesItem.cookieKey + '"  /><span class="cookiesblender-slider round"></span></label>';
                     content+= '<tr><td>' + cookiesItem.name + '</td><td>' + checkbox + '</td></tr>';
                 }
                 content+= '</table>';
@@ -167,8 +173,6 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(function(json) {
             // console.log(json);
         });
-
-
     }
 
     if(!cookieDialogUserAnswer) {
@@ -177,17 +181,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let button = document.createElement('span');
     button.setAttribute('id','cookiesblender-dialog-btn');
+    button.setAttribute('title',cookiesBlenderParams.langs.cookiesButtonTitle);
     button.addEventListener('click', function (event) {
         // Don't follow the link
         event.preventDefault();
-
         cookiesBlenderDialog(true);
-
     }, false);
     document.body.append(button);
 
-
-
-
 });
-

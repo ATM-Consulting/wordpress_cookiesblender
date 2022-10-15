@@ -1,7 +1,7 @@
 /**
  * Dialog class.
  */
-class Dialog {
+class CookiesBlenderDialog {
 
 	/**
 	 * Element
@@ -28,11 +28,13 @@ class Dialog {
 				onClose : function (){ return true; },
 				onOpen : function (){ return true; },
 				onAccept : function (){ return true; },
+				onRefuse : function (){ return true; },
 				template: '<header ></header>' +
 					'<form method="dialog" data-ref="form">\n' +
 					'   <div class="body" ></div>\n' +
 					'   <footer>\n' +
-					'        <button class="btn btn-primary cookiesblender-btn" data-btn-role="cancel" value="cancel">'+ this.langs.Cancel +'</button>\n' +
+					// '        <button class="btn btn-primary cookiesblender-btn" data-btn-role="cancel" value="cancel">'+ this.langs.Cancel +'</button>\n' +
+					'        <button class="btn btn-primary cookiesblender-btn" data-btn-role="refuse" value="refuse">'+ this.langs.Cancel +'</button>\n' +
 					'        <button class="btn btn-primary cookiesblender-btn"  data-btn-role="accept" value="default">'+ this.langs.Ok +'</button>\n' +
 					'   </footer>\n' +
 					'</form>'
@@ -73,16 +75,29 @@ class Dialog {
 		});
 
 
+		this.buttons.refuse = this.dialog.querySelector('[data-btn-role="refuse"]');
+		if(this.buttons.refuse != undefined){
+			this.buttons.refuse.addEventListener("click", (e)=>{
+				e.preventDefault(); // Cancel the native event
+				e.stopPropagation();// Don't bubble/capture the event any further
+				if(this.settings.onRefuse(this)){
+					this.toggle();
+				}
+			});
+		}
+
+
 
 		this.buttons.cancel = this.dialog.querySelector('[data-btn-role="cancel"]');
-		// $(this.dialog.querySelector('header')).dragsDialog(); //TODO : faut-il le mettre ou pas ? // rend les boites de dialogue draggable
-
-		this.buttons.cancel.addEventListener("click", (e)=>{
-			e.preventDefault(); // Cancel the native event
-			e.stopPropagation();// Don't bubble/capture the event any further
-			this.toggle();
-		});
-
+		if(this.buttons.cancel != undefined){
+			this.buttons.cancel.addEventListener("click", (e)=>{
+				e.preventDefault(); // Cancel the native event
+				e.stopPropagation();// Don't bubble/capture the event any further
+				if(this.settings.onCancel(this)){
+					this.toggle();
+				}
+			});
+		}
 
 		this.dialog.querySelector('.body').insertAdjacentHTML('afterbegin', this.settings.content);
 

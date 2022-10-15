@@ -9,6 +9,36 @@ document.addEventListener("DOMContentLoaded", function() {
         document.cookie = cname + "=" + cvalue + "; path=/" + "; " + expires;
     }
 
+
+    // Sticking with broadly-supported features:
+    let insertJsRawScriptIntoDom  = function (htmlString){
+
+        targetId = 'cookiesblender-scripts-temporary';
+
+        if(document.getElementById(targetId) == undefined){
+            let targetDom = document.createElement("div");
+            targetDom.id = targetId;
+            document.body.appendChild(targetDom);
+        }
+
+        let target = document.getElementById(targetId);
+        target.insertAdjacentHTML("beforeend", htmlString);
+        let scripts = target.getElementsByTagName("script");
+        while (scripts.length) {
+            let script = scripts[0];
+            script.parentNode.removeChild(script);
+            let newScript = document.createElement("script");
+            if (script.src) {
+                newScript.src = script.src;
+            } else if (script.textContent) {
+                newScript.textContent = script.textContent;
+            } else if (script.innerText) {
+                newScript.innerText = script.innerText;
+            }
+            document.body.appendChild(newScript);
+        }
+    }
+
     let getCookie = function (cname) {
         let name = cname + "=";
         let decodedCookie = decodeURIComponent(document.cookie);
@@ -33,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const eqPos = cookie.indexOf("=");
             const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
             setCookie(name, null, -1);
+            console.log('clear cookie : ' + name);
         }
     }
 
@@ -40,11 +71,15 @@ document.addEventListener("DOMContentLoaded", function() {
     let cookieDialogUserAnswer = getCookie('cookieDialogAnswer');
 
     let setCookieDialogUserAnswered = function (){
-        // setCookie('cookieDialogAnswer', true)
+        setCookie('cookieDialogAnswer', true)
+    }
+
+    let setCookieBlenderConsentStatus = function (cookieKey, status){
+        setCookie('cookiesblender_consent_' + cookieKey, status);
     }
 
     const cookiesBlenderDialog = function (startOpen = false){
-        fetch(cookiesBlenderSiteUrl + '/wp-json/cookiesblender/v1/getscripts', {
+        fetch(cookiesBlenderParams.siteUrl + '/wp-json/cookiesblender/v1/getscripts', {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -67,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 content+= '<div><small>* ' + json.langs.optionWithStartAreRequired + '</small></div>';
 
-                new Dialog({
+                new CookiesBlenderDialog({
                         title: json.langs.WeAreCookies,
                         content: content,
                         startOpen: startOpen,
@@ -81,27 +116,42 @@ document.addEventListener("DOMContentLoaded", function() {
                             setCookieDialogUserAnswered();
 
                             let checkedCookiesBlenders = document.querySelectorAll('input[type=checkbox][name=accepted-cookieblenders]:checked');
+
                             let acceptedCookiesBlenders = [];
-                            for (let item in checkedCookiesBlenders) {
-                                acceptedCookiesBlenders.push(checkedCookiesBlenders.value);
+
+                            for (i = 0; i < checkedCookiesBlenders.length; ++i) {
+                                acceptedCookiesBlenders.push(checkedCookiesBlenders[i].value);
                             }
 
+                            for (i = 0; i < json['cookiesList'].length; ++i) {
+                                let cookiesItem = json['cookiesList'][i];
 
-                            for (let item in json['cookiesList']) {
-                                let cookiesItem = json['cookiesList'][item];
-                                if(acceptedCookiesBlenders.includes(cookiesItem.cookieKey)){
+                                if(acceptedCookiesBlenders.includes(cookiesItem.cookieKey)){;
+                                    // add consent
+                                    setCookieBlenderConsentStatus(cookiesItem.cookieKey , 1);
 
+                                    // Load script into page
+                                    if(!cookiesBlenderParams.activeOnThisPage.includes(cookiesItem.cookieKey)){
+                                        if(cookiesItem.content.length > 0){
+                                            cookiesBlenderParams.activeOnThisPage.push(cookiesItem.cookieKey);
+                                            insertJsRawScriptIntoDom('<!-- Set cookies blender params -->' + "\r\n"  + cookiesItem.content);
+                                        }
+                                    }
                                 }
                                 else{
+                                    // Remove consent
+                                    setCookieBlenderConsentStatus(cookiesItem.cookieKey, 0);
 
+                                    console.log('setCookieBlenderConsentStatus not accepted for '+ cookiesItem.cookieKey);
                                 }
                             }
 
                             return true;
                         },
-                        onCancel: function(){
+                        onRefuse: function(){
                             clearAllCookies();
                             setCookieDialogUserAnswered();
+                            return true;
                         },
                         onClose : function (){
                             return true;
@@ -121,7 +171,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     }
 
-    cookiesBlenderDialog(!cookieDialogUserAnswer);
+    if(!cookieDialogUserAnswer) {
+        cookiesBlenderDialog(!cookieDialogUserAnswer);
+    }
 
     let button = document.createElement('span');
     button.setAttribute('id','cookiesblender-dialog-btn');

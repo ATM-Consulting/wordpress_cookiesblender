@@ -5,6 +5,44 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 
+
+
+add_action( 'wp_head', function() {
+
+    $consentList = getCookiesblenderConsentList();
+
+    $activeOnThisPage = array();
+    $scriptsToAdd='';
+    if(!empty($consentList)){
+        $scriptsToAdd.='<!-- Start Cookies blender accepted script -->'."\r\n";
+
+        foreach ($consentList as $key => $item){
+            $enable = boolval(get_option('enable_'.$key.'_cookies'));
+            if(!$enable || checkCookiesBlenderAccepted($key) < 1){ continue;  }
+
+            $activeOnThisPage[] = $key;
+            $scriptsToAdd.='<!-- Start script '.$key.' -->'."\r\n";
+            $scriptsToAdd.=get_option($key.'_script')."\r\n";
+            $scriptsToAdd.='<!-- End script '.$key.' -->'."\r\n";
+
+        }
+
+        $scriptsToAdd.='<!-- End Cookies blender accepted script -->'."\r\n";
+    }
+
+    $params = new stdClass();
+    $params->siteUrl = get_option('siteurl');
+    $params->activeOnThisPage = $activeOnThisPage;
+
+    print '<!-- Set cookies blender params -->'."\r\n";
+    print '<script  type="text/javascript" id="cookiesblender-param-script">';
+    print 'var cookiesBlenderParams = '.json_encode($params).';';
+    print '</script>'."\r\n";
+
+    print $scriptsToAdd;
+});
+
+
 /**
  * register jquery and style on initialization
  */

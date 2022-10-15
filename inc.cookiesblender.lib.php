@@ -46,6 +46,7 @@ function getCookiesBlenderConsentDataList(){
         $item->title = $params['title'];
         $item->cookieKey = $key;
         $item->name = get_option($key.'_cookies');
+        $item->accepted = checkCookiesBlenderAccepted($key);
         if(empty($item->name)){
             $item->name = $item->title;
         }
@@ -56,3 +57,15 @@ function getCookiesBlenderConsentDataList(){
     return $data;
 }
 
+/**
+ * @param $cookieKey
+ * @return int -1 for not set, 0 for refused 1 for accepted
+ */
+function checkCookiesBlenderAccepted($cookieKey){
+
+    if(!isset($_COOKIE['cookiesblender_consent_'.$cookieKey])){
+        return -1;
+    }
+
+    return intval($_COOKIE['cookiesblender_consent_'.$cookieKey]);
+}

@@ -53,9 +53,9 @@ document.addEventListener("DOMContentLoaded", function() {
         .then((response) => {
             return response.json().then(function(json) {
 
-                let content = '<table class="cookiesblender-table-list">';
+                let content = '<div class="dilog-content">' + json.dialogContent + '</div><table class="cookiesblender-table-list">';
                 let checkbox = '<label class="cookiesblender-switch"><input type="checkbox"  name="accepted-cookieblenders" checked="checked" disabled value="required"  /><span class="cookiesblender-slider round"></span></label>';
-                content+= '<tr><td>' + json.langs.RequiredCookies + '</td><td>' + checkbox + '</td></tr>';
+                content+= '<tr><td>' + json.langs.RequiredCookies + ' (*)</td><td>' + checkbox + '</td></tr>';
 
 
                 for (let item in json['cookiesList']) {
@@ -64,6 +64,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     content+= '<tr><td>' + cookiesItem.name + '</td><td>' + checkbox + '</td></tr>';
                 }
                 content+= '</table>';
+
+                content+= '<div><small>* ' + json.langs.optionWithStartAreRequired + '</small></div>';
 
                 new Dialog({
                         title: json.langs.WeAreCookies,

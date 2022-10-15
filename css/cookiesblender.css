@@ -121,6 +121,12 @@ dialog.cookiesblender-dialog{
 dialog.cookiesblender-dialog::backdrop{
     backdrop-filter: blur(1px);
     background-color: rgba(0,0,0,0.5);
+
+
+    background-image: url("../img/cookies.png");
+    background-repeat: no-repeat;
+    background-position: 60% 40%;
+    background-size: min(300px, 50%);
 }
 
 dialog.cookiesblender-dialog :is(header, footer, .body):empty{

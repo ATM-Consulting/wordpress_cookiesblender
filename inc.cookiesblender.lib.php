@@ -8,6 +8,9 @@ if ( ! defined( 'WPINC' ) ) {
 
 function getCookiesblenderConsentList(){
     return array(
+        'required' => array(
+            'title' => __('Cookies requis aux fonctionnement')
+        ),
         'analytics' => array(
             'title' => __('Analytics')
         ),
@@ -17,6 +20,15 @@ function getCookiesblenderConsentList(){
     );
 }
 
+function get_option_or_default($optionKey, $default = '') {
+    $value = get_option($optionKey);
+    if($value === false){
+        return $default;
+    }
+
+    return $value;
+}
+
 function getCookiesBlenderConsentDataList(){
     $consentList = getCookiesblenderConsentList();
 
@@ -24,19 +36,21 @@ function getCookiesBlenderConsentDataList(){
         'cookiesList' => array(),
         'pages' => array(
 //            'rgpdPageUrl' => get_option('rgpdPageUrl')
+            'privacyPolicy' => get_privacy_policy_url()
         ),
         'langs' => array(
-            'WeAreCookies' => get_option('cookiesblenderDialogTitle') ? get_option('cookiesblenderDialogTitle') :  __('Bonjour, nous sommes les cookies !'),
+            'WeAreCookies' => get_option_or_default('cookiesblenderDialogTitle', __('Bonjour, nous sommes les cookies !')),
             'RequiredCookies' => __('Cookies requis aux fonctionnement'),
             'SaveCookiesConfiguration' => __('Sauvegarder mes préférences'),
             'AcceptAll' => __('Accepter'),
             'optionWithStartAreRequired' => __('Option obligatoire ne pouvant être retirée'),
+            'CheckPrivacyPolicyPage' => __('Consultez notre politique de confidentialité'),
         ),
-        'dialogContent' => get_option('cookiesblenderDialogMessage')
+        'dialogContent' => get_option_or_default('cookiesblenderDialogMessage')
     );
 
     foreach ($consentList as $key => $params){
-        $enable = boolval(get_option('enable_'.$key.'_cookies'));
+        $enable = checkCookiesBlenderEnabled($key);
 
         if(!$enable){
             continue;
@@ -45,12 +59,12 @@ function getCookiesBlenderConsentDataList(){
         $item = new stdClass();
         $item->title = $params['title'];
         $item->cookieKey = $key;
-        $item->name = get_option($key.'_cookies');
+        $item->name = get_option_or_default($key.'_cookies');
         $item->accepted = checkCookiesBlenderAccepted($key);
         if(empty($item->name)){
             $item->name = $item->title;
         }
-        $item->content = get_option($key.'_script');
+        $item->content = get_option_or_default($key.'_script');
 
         $data['cookiesList'][] = $item;
     }
@@ -63,9 +77,29 @@ function getCookiesBlenderConsentDataList(){
  */
 function checkCookiesBlenderAccepted($cookieKey){
 
+    // les cookies obligatoires ne sont validés qu'après la première action de l'internaute
+    if($cookieKey == 'required' && (isset($_COOKIE['cookieDialogAnswer']) || isset($_COOKIE['cookiesblender_consent_required']))){
+        return true;
+    }
+
+
     if(!isset($_COOKIE['cookiesblender_consent_'.$cookieKey])){
         return -1;
     }
 
     return intval($_COOKIE['cookiesblender_consent_'.$cookieKey]);
+}
+
+
+
+/**
+ * @param $cookieKey
+ * @return bool
+ */
+function checkCookiesBlenderEnabled($cookieKey){
+    if($cookieKey == 'required'){
+        return true;
+    }
+
+    return boolval(get_option('enable_'.$cookieKey.'_cookies'));
 }

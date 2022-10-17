@@ -88,25 +88,36 @@ document.addEventListener("DOMContentLoaded", function() {
         .then((response) => {
             return response.json().then(function(json) {
 
-                let content = '<div class="dilog-content">' + json.dialogContent + '</div><table class="cookiesblender-table-list">';
-                let checkbox = '<label class="cookiesblender-switch"><input type="checkbox"  name="accepted-cookieblenders" checked="checked" disabled value="required"  /><span class="cookiesblender-slider round"></span></label>';
-                content+= '<tr><td>' + json.langs.RequiredCookies + ' (*)</td><td>' + checkbox + '</td></tr>';
+                 let content = '<div class="dilog-content">' + json.dialogContent + '</div>';
+                content+= '<table class="cookiesblender-table-list">';
 
+                // let checkbox = '<label class="cookiesblender-switch"><input type="checkbox"  name="accepted-cookieblenders" checked="checked" disabled value="required"  /><span class="cookiesblender-slider round"></span></label>';
+
+                // content+= '<tr><td>' + json.langs.RequiredCookies + ' (*)</td><td>' + checkbox + '</td></tr>';
 
                 for (let item in json['cookiesList']) {
                     let cookiesItem = json['cookiesList'][item];
 
-                    let checkedAttr = '';
-                    if(cookiesItem.accepted != 0){
-                        checkedAttr = 'checked="checked"';
+                    let moreAttribute = '';
+                    if(cookiesItem.accepted != 0 || 'required' == cookiesItem.cookieKey){
+                        moreAttribute+= ' checked="checked" ';
                     }
 
-                    let checkbox = '<label class="cookiesblender-switch"><input type="checkbox"  name="accepted-cookieblenders" ' + checkedAttr + ' value="' + cookiesItem.cookieKey + '"  /><span class="cookiesblender-slider round"></span></label>';
+                    if('required' == cookiesItem.cookieKey){
+                        cookiesItem.name+= ' (*)';
+                        moreAttribute+= ' disabled ';
+                    }
+
+                    let checkbox = '<label class="cookiesblender-switch"><input type="checkbox"  name="accepted-cookieblenders" ' + moreAttribute + ' value="' + cookiesItem.cookieKey + '"  /><span class="cookiesblender-slider round"></span></label>';
                     content+= '<tr><td>' + cookiesItem.name + '</td><td>' + checkbox + '</td></tr>';
                 }
                 content+= '</table>';
 
                 content+= '<div><small>* ' + json.langs.optionWithStartAreRequired + '</small></div>';
+
+                if(json.pages.privacyPolicy.length > 0) {
+                    content += '<div><small><a href="' + json.pages.privacyPolicy + '">' + json.langs.CheckPrivacyPolicyPage + '</a></small></div>';
+                }
 
                 new CookiesBlenderDialog({
                         title: json.langs.WeAreCookies,

@@ -17,7 +17,7 @@ add_action( 'wp_head', function() {
         $scriptsToAdd.='<!-- Start Cookies blender accepted script -->'."\r\n";
 
         foreach ($consentList as $key => $item){
-            $enable = boolval(get_option('enable_'.$key.'_cookies'));
+            $enable = checkCookiesBlenderEnabled($key);
             if(!$enable || checkCookiesBlenderAccepted($key) < 1){ continue;  }
 
             $activeOnThisPage[] = $key;

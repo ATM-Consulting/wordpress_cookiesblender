@@ -31,6 +31,7 @@ add_action('admin_init', function() { // whitelist options
 
     register_setting( 'cookiesblender-option-group', 'cookiesblenderDialogMessage' );
     register_setting( 'cookiesblender-option-group', 'cookiesblenderDialogTitle' );
+    register_setting( 'cookiesblender-option-group', 'cookiesblenderDialogTitle' );
 
 
     $consentList = getCookiesblenderConsentList();
@@ -70,10 +71,10 @@ function add_cookiesblender_config_page(){
     print '</tr>';
 
     print '<tr>';
-    print '<th scope="row">'.__('Page url for cookies policies').'</th>';
+    print '<th scope="row">'.__('Cookies dialog description').'</th>';
     $settings = array();
     print '<td>';
-    wp_editor( get_option('cookiesblenderDialogMessage'), 'cookiesblenderDialogMessage', $settings);
+    wp_editor( get_option_or_default('cookiesblenderDialogMessage', __('Nous utilisons des cookies pour vous garantir la meilleure expérience sur notre site web. ')), 'cookiesblenderDialogMessage', $settings);
     print '</td>';
     print '</tr>';
 
@@ -82,13 +83,17 @@ function add_cookiesblender_config_page(){
 
     foreach ($consentList as $key => $params){
 
-        $enable = boolval(get_option('enable_'.$key.'_cookies'));
+        $enable = checkCookiesBlenderEnabled($key);
+
         print '<tr><td colspan="2"><hr/></td></tr>';
 
         print '<tr>';
         print '<th scope="row">'.$params['title'].'</th>';
         print '<td>';
-        print '<label class="cookiesblender-switch"><input type="checkbox"  name="enable_'.$key.'_cookies" value="1" '.($enable?' checked="checked" ':'').' /><span class="cookiesblender-slider round"></span></label>';
+
+        if($key != 'required') {
+            print '<label class="cookiesblender-switch"><input type="checkbox"  name="enable_' . $key . '_cookies" value="1" ' . ($enable ? ' checked="checked" ' : '') . ' /><span class="cookiesblender-slider round"></span></label>';
+        }
         print '</tr>';
         print '</tr>';
 

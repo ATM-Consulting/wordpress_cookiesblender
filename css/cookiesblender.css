@@ -315,3 +315,33 @@ html[data-theme-color-scheme="dark"] .dialog-form-item [readonly]{
 .cookiesblender-table-list tr:not(:last-child) :where(td,th){
     border-bottom: 1px solid rgba(0,0,0,0.05);
 }
+
+.cookiesblender-show-description{
+    font-size: 0.7em;
+    display: inline-block;
+    font-style: italic;
+    color: #666666;
+
+    background: #ededed;
+    padding: 3px 5px;
+    border-radius: 3px;
+    line-height: 1em;
+
+    cursor: pointer;
+}
+
+.cookiesblender-show-description.--close:before{
+    content: "+ ";
+}
+
+.cookiesblender-show-description.--open:before{
+    content: "- ";
+}
+
+.cookiesblender-description-toggle{
+    font-size: 0.9em;
+    color: #575757;
+}
+.cookiesblender-description-toggle.--close{
+    display: none;
+}

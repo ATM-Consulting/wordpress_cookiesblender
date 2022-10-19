@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.cookie = cname + "=" + cvalue + "; path=/" + "; " + expires;
     }
 
-
     // Sticking with broadly-supported features:
     let insertJsRawScriptIntoDom  = function (htmlString){
 
@@ -109,7 +108,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
 
                     let checkbox = '<label class="cookiesblender-switch"><input type="checkbox"  name="accepted-cookieblenders" ' + moreAttribute + ' value="' + cookiesItem.cookieKey + '"  /><span class="cookiesblender-slider round"></span></label>';
-                    content+= '<tr><td>' + cookiesItem.name + '</td><td>' + checkbox + '</td></tr>';
+
+                    let showMoreBtn = '';
+                    if(cookiesItem.decription.length > 0){
+                        showMoreBtn = ' <small class="cookiesblender-show-description --close" data-cookies="' + cookiesItem.cookieKey + '" >' + json.langs.ShowDetails + '</small>';
+                    }
+                    content+= '<tr><td>' + cookiesItem.name + showMoreBtn + '</td><td>' + checkbox + '</td></tr>';
+
+                    if(cookiesItem.decription.length > 0) {
+                        content += '<tr class="cookiesblender-description-toggle --close" data-cookies="' + cookiesItem.cookieKey + '" ><td colspan="2">' + cookiesItem.decription + '</td></tr>';
+                    }
+
                 }
                 content+= '</table>';
 
@@ -127,6 +136,32 @@ document.addEventListener("DOMContentLoaded", function() {
                             if(document.querySelectorAll('.cookiesblender-btn[data-btn-role="accept"]').length > 0){
                                 document.querySelectorAll('.cookiesblender-btn[data-btn-role="accept"]')[0].focus();
                             }
+                        },
+                        onInit: function(dialogobj){
+                            let moreInfosBtn = dialogobj.dialog.querySelectorAll('.cookiesblender-show-description');
+                            moreInfosBtn.forEach(el => el.addEventListener('click', event => {
+                                let dataCookies = event.target.getAttribute("data-cookies");
+                                if(dataCookies.length > 0){
+                                    let classToRemove = '--open';
+                                    let classToAdd = '--close';
+                                    if(el.classList.contains('--close')){
+                                        classToRemove = '--close';
+                                        classToAdd =  '--open';
+                                    }
+
+                                    el.classList.remove(classToRemove);
+                                    el.classList.add(classToAdd);
+
+
+                                    let descBlocks = dialogobj.dialog.querySelectorAll('.cookiesblender-description-toggle[data-cookies="'+dataCookies+'"]');
+                                    descBlocks.forEach(function(item){
+                                        item.classList.remove(classToRemove);
+                                        item.classList.add(classToAdd);
+                                    });
+
+
+                                }
+                            }));
                         },
                         onAccept: function(){
                             clearAllCookies();

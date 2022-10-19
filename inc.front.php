@@ -58,4 +58,15 @@ add_action('init', function() {
 add_action('wp_enqueue_scripts', function(){
     wp_enqueue_script('cookiesblender_js');
     wp_enqueue_style( 'cookiesblender_style' );
+
+
+    // disable recapcha
+    $enable_wpcf7_recapcha = boolval(get_option('cookiesBlender_wpcf7_recapcha_cookies'));
+    if (!$enable_wpcf7_recapcha && checkCookiesBlenderAccepted('required')){
+        wp_dequeue_script( 'google-recaptcha' );
+        wp_dequeue_script( 'google-invisible-recaptcha' );
+    }
 });
+
+
+

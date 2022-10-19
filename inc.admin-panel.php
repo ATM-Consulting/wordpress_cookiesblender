@@ -32,12 +32,14 @@ add_action('admin_init', function() { // whitelist options
     register_setting( 'cookiesblender-option-group', 'cookiesblenderDialogMessage' );
     register_setting( 'cookiesblender-option-group', 'cookiesblenderDialogTitle' );
     register_setting( 'cookiesblender-option-group', 'cookiesblenderDialogTitle' );
+    register_setting( 'cookiesblender-option-group', 'cookiesBlender_wpcf7_recapcha_cookies' );
 
 
     $consentList = getCookiesblenderConsentList();
     foreach ($consentList as $key => $params){
         register_setting( 'cookiesblender-option-group', $key.'_cookies' );
         register_setting( 'cookiesblender-option-group', $key.'_script' );
+        register_setting( 'cookiesblender-option-group', $key.'_description' );
         register_setting( 'cookiesblender-option-group', 'enable_'.$key.'_cookies' );
     }
 });
@@ -88,13 +90,15 @@ function add_cookiesblender_config_page(){
         print '<tr><td colspan="2"><hr/></td></tr>';
 
         print '<tr>';
-        print '<th scope="row">'.$params['title'].'</th>';
-        print '<td>';
-
         if($key != 'required') {
+            print '<th scope="row">'.$params['title'].'</th>';
+            print '<td>';
             print '<label class="cookiesblender-switch"><input type="checkbox"  name="enable_' . $key . '_cookies" value="1" ' . ($enable ? ' checked="checked" ' : '') . ' /><span class="cookiesblender-slider round"></span></label>';
+            print '</td>';
         }
-        print '</tr>';
+        else{
+            print '<th scope="row" colspan="2">'.$params['title'].'</th>';
+        }
         print '</tr>';
 
         print '<tr>';
@@ -102,15 +106,40 @@ function add_cookiesblender_config_page(){
         print '<td>';
         print '<input type="text" class="regular-text" name="'.$key.'_cookies" value="'.esc_attr( get_option($key.'_cookies') ).'" />';
         print '</tr>';
+
+        print '<tr>';
+        print '<th scope="row">'.__('Cookies description').'</th>';
+        $settings = array(
+            'textarea_rows'       => 5,
+            'teeny'               => false,
+        );
+        print '<td>';
+        $wysiwyg = $key.'_description' ;
+        wp_editor( get_option($wysiwyg), $wysiwyg, $settings);
+        print '</td>';
         print '</tr>';
 
         print '<tr>';
         print '<th scope="row">'.__('Script if accepted').'</th>';
         print '<td>';
         print '<textarea style="width: 100%; min-height: 300px;" name="'.$key.'_script" >'.esc_attr( get_option($key.'_script')).'</textarea>';
-
         print '</td>';
         print '</tr>';
+
+        if($key == 'required' && is_plugin_active( 'contact-form-7/wp-contact-form-7.php')){
+
+            $name = 'cookiesBlender_wpcf7_recapcha_cookies';
+            $enable = boolval(get_option($name));
+            print '<tr>';
+            print '<th scope="row">'.__('Disable ReCapchat of contact form 7 while required cookies not set').'</th>';
+            print '<td>';
+            print '<label class="cookiesblender-switch"><input type="checkbox"  name="'.$name.'" value="1" ' . ($enable ? ' checked="checked" ' : '') . ' /><span class="cookiesblender-slider round"></span></label>';
+//            print '<p>';
+//            print __('If this option is setted, you need to add this shortcode to your contact-form-7 forms to add fallback message in case of   ');
+//            print '</p>';
+            print '</tr>';
+        }
+
     }
 
 

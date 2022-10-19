@@ -45,6 +45,7 @@ function getCookiesBlenderConsentDataList(){
             'AcceptAll' => __('Accepter'),
             'optionWithStartAreRequired' => __('Option obligatoire ne pouvant être retirée'),
             'CheckPrivacyPolicyPage' => __('Consultez notre politique de confidentialité'),
+            'ShowDetails' => __('Plus d\'infos'),
         ),
         'dialogContent' => get_option_or_default('cookiesblenderDialogMessage')
     );
@@ -61,6 +62,7 @@ function getCookiesBlenderConsentDataList(){
         $item->cookieKey = $key;
         $item->name = get_option_or_default($key.'_cookies');
         $item->accepted = checkCookiesBlenderAccepted($key);
+        $item->decription = get_option_or_default($key.'_description');
         if(empty($item->name)){
             $item->name = $item->title;
         }
@@ -72,7 +74,7 @@ function getCookiesBlenderConsentDataList(){
 }
 
 /**
- * @param $cookieKey
+ * @param $cookieKey || 'required'
  * @return int -1 for not set, 0 for refused 1 for accepted
  */
 function checkCookiesBlenderAccepted($cookieKey){

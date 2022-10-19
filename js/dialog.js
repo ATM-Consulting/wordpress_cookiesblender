@@ -27,6 +27,7 @@ class CookiesBlenderDialog {
 				startOpen:true,
 				onClose : function (){ return true; },
 				onOpen : function (){ return true; },
+				onInit : function (){ return true; },
 				onAccept : function (){ return true; },
 				onRefuse : function (){ return true; },
 				template: '<header ></header>' +
@@ -126,6 +127,10 @@ class CookiesBlenderDialog {
 				this.focusable[index].focus();
 			}
 		})
+
+		if(this.settings.onInit(this)){
+
+		}
 
 		if(this.settings.startOpen){
 			this.toggle()
